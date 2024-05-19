@@ -1,9 +1,12 @@
+// user_controller.go
+
 package controllers
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/drotgalvao/GO-GAME-2/db"
 	"github.com/drotgalvao/GO-GAME-2/models"
@@ -27,13 +30,19 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	defer dbConn.Close()
 
 	err = repositories.SaveUser(dbConn, newUser)
-	if err!= nil {
-		log.Printf("Erro ao salvar o usuário: %v", err)
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
-		return
-	}
+    if err!= nil {
+        if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+            w.Header().Set("Content-Type", "application/json; charset=utf-8")
+            w.WriteHeader(http.StatusConflict)
+            json.NewEncoder(w).Encode(models.ErrorDTO{Code: http.StatusConflict, Message: "Email já cadastrado."})
+            return
+        } else {
+            log.Printf("Erro ao salvar o usuário: %v", err)
+            w.Header().Set("Content-Type", "application/json; charset=utf-8")
+            json.NewEncoder(w).Encode(models.ErrorDTO{Code: http.StatusInternalServerError, Message: err.Error()})
+            return
+        }
+    }
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newUser)
