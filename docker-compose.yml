@@ -15,7 +15,6 @@ services:
 
   app:
     build: .
-    command: go run main.go
     env_file:
       - .env
     volumes:
