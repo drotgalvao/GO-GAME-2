@@ -4,22 +4,16 @@ import (
 	"fmt"
 	"net/http"
 	
-	"github.com/drotgalvao/GO-GAME-2/db"
+	"github.com/gorilla/mux"
+
+	"github.com/drotgalvao/GO-GAME-2/controllers"
 )
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Olá, mundo!")
-}
 
 func main() {
-	dbConn, err := db.Connect()
-	if err != nil {
-		fmt.Printf("Erro ao conectar ao banco de dados: %s\n", err)
-		return
-	}
-	defer dbConn.Close()
-	http.HandleFunc("/", helloHandler)
+	r := mux.NewRouter()
+	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 
 	fmt.Println("Servidor rodando na porta 8080...")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", r)
 }
