@@ -1,6 +1,7 @@
 docker-compose down
 docker system prune -v
 
+curl -X POST http://localhost:8080/users -H "Content-Type: application/json" -d '{"name":"João Silva","email":"joaosilva@example.com","password":"senha123"}'
 
 docker-compose up -d
 
