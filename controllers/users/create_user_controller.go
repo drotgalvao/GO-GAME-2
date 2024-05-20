@@ -1,6 +1,4 @@
-// user_controller.go
-
-package controllers
+package users
 
 import (
 	"encoding/json"
@@ -20,9 +18,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
-		utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
-		return
+	// if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
+	// 	utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
+	// 	return
+	// }
+	err = validateUserCreationDTO(userCreationDTO, w)
+	if err!= nil {
+		return // Se houver um erro de validação, interrompe a execução da função CreateUser
 	}
 
 	dbConn, err := db.Connect()
@@ -52,4 +54,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(userResponseDTO)
+}
+
+
+func validateUserCreationDTO(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) error {
+	if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
+		utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
+	}
+	return nil
 }
