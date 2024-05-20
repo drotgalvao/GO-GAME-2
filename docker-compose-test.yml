@@ -8,10 +8,12 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: go_game
+      POSTGRES_MAX_CONNECTIONS: 200
     ports:
       - "5433:5432"
     volumes:
       - ./database_init.sql:/docker-entrypoint-initdb.d/database_init.sql
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
     deploy:
       resources:
         limits:

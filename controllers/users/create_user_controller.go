@@ -1,16 +1,17 @@
 package users
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 
-	"github.com/drotgalvao/GO-GAME-2/db"
+	// "github.com/drotgalvao/GO-GAME-2/db"
 	"github.com/drotgalvao/GO-GAME-2/models"
 	"github.com/drotgalvao/GO-GAME-2/repositories"
 	"github.com/drotgalvao/GO-GAME-2/utils"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func CreateUser(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 	var userCreationDTO models.UserCreationDTO
 	err := json.NewDecoder(r.Body).Decode(&userCreationDTO)
 	if err != nil {
@@ -24,7 +25,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		if err := validateUserCreationDTO(userCreationDTO, w); err != nil {
 			utils.HandleError(w, http.StatusBadRequest, err.Error())
 		} else {
-			processUserCreation(userCreationDTO, w)
+			processUserCreation(userCreationDTO, w, dbConn)
 		}
 		done <- true
 	}()
@@ -32,13 +33,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	<-done
 }
 
-func processUserCreation(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) {
-	dbConn, err := db.Connect()
-	if err != nil {
-		utils.HandleError(w, http.StatusInternalServerError, "error connecting to the database: "+err.Error())
-		return
-	}
-	defer dbConn.Close()
+func processUserCreation(userCreationDTO models.UserCreationDTO, w http.ResponseWriter, dbConn *sql.DB) {
+	// usar db conn
 
 	existingUser, err := repositories.GetUserByEmail(dbConn, userCreationDTO.Email)
 	if err != nil {
