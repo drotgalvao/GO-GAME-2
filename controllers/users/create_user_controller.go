@@ -53,7 +53,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func validateUserCreationDTO(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) error {
-	if err := utils.ValidateFields(&userCreationDTO); err != nil {
+	if err := utils.ValidateDTOFields(&userCreationDTO); err != nil {
 		utils.HandleError(w, http.StatusBadRequest, err.Error())
 		return err
 	}

@@ -5,14 +5,12 @@ import (
 	"reflect"
 )
 
-// ValidateFields verifica se todos os campos do DTO estão preenchidos.
-func ValidateFields(dto interface{}) error {
+func ValidateDTOFields(dto interface{}) error {
 	value := reflect.ValueOf(dto)
 	if value.Kind()!= reflect.Ptr || value.IsNil() {
 		return errors.New("dto must be a pointer type")
 	}
 
-	// Obtenha o valor apontado pelo ponteiro
 	structValue := value.Elem()
 
 	for i := 0; i < structValue.NumField(); i++ {
