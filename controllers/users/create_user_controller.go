@@ -14,17 +14,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var userCreationDTO models.UserCreationDTO
 	err := json.NewDecoder(r.Body).Decode(&userCreationDTO)
 	if err != nil {
-		utils.HandleError(w, http.StatusBadRequest, "Erro ao decodificar o corpo da requisição: "+err.Error())
+		utils.HandleError(w, http.StatusBadRequest, "Invalid JSON payload")
 		return
 	}
 
-	// if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
-	// 	utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
-	// 	return
-	// }
 	err = validateUserCreationDTO(userCreationDTO, w)
-	if err!= nil {
-		return // Se houver um erro de validação, interrompe a execução da função CreateUser
+	if err != nil {
+		return
 	}
 
 	dbConn, err := db.Connect()
@@ -56,10 +52,19 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(userResponseDTO)
 }
 
-
 func validateUserCreationDTO(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) error {
-	if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
-		utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
+	// if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
+	// 	utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
+	// 	return errors.New("validation failed")
+	// }
+
+	if err := utils.ValidateFields(&userCreationDTO); err != nil {
+		utils.HandleError(w, http.StatusBadRequest, err.Error())
+		return err
+	}
+	if err := utils.ValidatePasswordStrength(userCreationDTO.Password); err != nil {
+		utils.HandleError(w, http.StatusBadRequest, err.Error())
+		return err
 	}
 	return nil
 }
