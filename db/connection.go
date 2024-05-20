@@ -36,7 +36,7 @@ func Connect() (*sql.DB, error) {
         log.Fatalf("Erro ao fazer ping no banco de dados: %v", err)
     }
 
-    log.Println("Conectado ao banco de dados com sucesso!!")
+    // log.Println("Conectado ao banco de dados com sucesso!!")
 
     return dbConn, nil
 }
