@@ -8,7 +8,7 @@ import (
 )
 
 func HandleError(w http.ResponseWriter, statusCode int, message string) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(models.ErrorDTO{Code: statusCode, Message: message})
 }
