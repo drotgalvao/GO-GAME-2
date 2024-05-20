@@ -18,11 +18,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = validateUserCreationDTO(userCreationDTO, w)
-	if err != nil {
-		return
-	}
+	done := make(chan bool)
 
+	go func() {
+		if err := validateUserCreationDTO(userCreationDTO, w); err != nil {
+			utils.HandleError(w, http.StatusBadRequest, err.Error())
+		} else {
+			processUserCreation(userCreationDTO, w)
+		}
+		done <- true
+	}()
+
+	<-done
+}
+
+func processUserCreation(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) {
 	dbConn, err := db.Connect()
 	if err != nil {
 		utils.HandleError(w, http.StatusInternalServerError, "error connecting to the database: "+err.Error())
