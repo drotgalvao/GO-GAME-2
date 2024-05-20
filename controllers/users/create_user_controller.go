@@ -14,7 +14,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var userCreationDTO models.UserCreationDTO
 	err := json.NewDecoder(r.Body).Decode(&userCreationDTO)
 	if err != nil {
-		utils.HandleError(w, http.StatusBadRequest, "Invalid JSON payload")
+		utils.HandleError(w, http.StatusBadRequest, "invalid JSON payload")
 		return
 	}
 
@@ -25,25 +25,25 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	dbConn, err := db.Connect()
 	if err != nil {
-		utils.HandleError(w, http.StatusInternalServerError, "Erro ao conectar ao banco de dados: "+err.Error())
+		utils.HandleError(w, http.StatusInternalServerError, "error connecting to the database: "+err.Error())
 		return
 	}
 	defer dbConn.Close()
 
 	existingUser, err := repositories.GetUserByEmail(dbConn, userCreationDTO.Email)
 	if err != nil {
-		utils.HandleError(w, http.StatusInternalServerError, "Erro ao buscar o usuário: "+err.Error())
+		utils.HandleError(w, http.StatusInternalServerError, "error fetching the user: "+err.Error())
 		return
 	}
 
 	if existingUser != nil {
-		utils.HandleError(w, http.StatusConflict, "Email já cadastrado.")
+		utils.HandleError(w, http.StatusConflict, "email already registered.")
 		return
 	}
 
 	userResponseDTO, err := repositories.SaveUser(dbConn, userCreationDTO)
 	if err != nil {
-		utils.HandleError(w, http.StatusInternalServerError, "Erro ao salvar o usuário: "+err.Error())
+		utils.HandleError(w, http.StatusInternalServerError, "error saving the user: "+err.Error())
 		return
 	}
 
@@ -53,11 +53,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func validateUserCreationDTO(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) error {
-	// if userCreationDTO.Name == "" || userCreationDTO.Email == "" || userCreationDTO.Password == "" {
-	// 	utils.HandleError(w, http.StatusBadRequest, "Todos os campos devem ser preenchidos.")
-	// 	return errors.New("validation failed")
-	// }
-
 	if err := utils.ValidateFields(&userCreationDTO); err != nil {
 		utils.HandleError(w, http.StatusBadRequest, err.Error())
 		return err
