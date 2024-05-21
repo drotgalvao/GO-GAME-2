@@ -16,9 +16,11 @@ type User struct {
 }
 
 type UserCreationDTO struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name            string `json:"name"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
+    // Bio             *string `json:"bio,omitempty"` // example of optional field
 }
 
 type UserResponseDTO struct {

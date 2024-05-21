@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/drotgalvao/GO-GAME-2/models"
@@ -21,7 +22,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 	done := make(chan bool)
 
 	go func() {
-		if err := validateUserCreationDTO(userCreationDTO, w); err != nil {
+		if err := validateUserCreationDTO(userCreationDTO); err != nil {
 			utils.HandleError(w, http.StatusBadRequest, err.Error())
 		} else {
 			processUserCreation(userCreationDTO, w, dbConn)
@@ -33,7 +34,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 }
 
 func processUserCreation(userCreationDTO models.UserCreationDTO, w http.ResponseWriter, dbConn *sql.DB) {
-	// usar db conn
 
 	existingUser, err := repositories.GetUserByEmail(dbConn, userCreationDTO.Email)
 	if err != nil {
@@ -64,13 +64,17 @@ func processUserCreation(userCreationDTO models.UserCreationDTO, w http.Response
 	json.NewEncoder(w).Encode(userResponseDTO)
 }
 
-func validateUserCreationDTO(userCreationDTO models.UserCreationDTO, w http.ResponseWriter) error {
-	if err := utils.ValidateDTOFields(&userCreationDTO); err != nil {
-		utils.HandleError(w, http.StatusBadRequest, err.Error())
-		return err
+func validateUserCreationDTO(userCreationDTO models.UserCreationDTO) error {
+	result, errorMessage := utils.ValidateDTOFields(&userCreationDTO) // check if all fields are setted
+	if!result {
+		return errors.New(errorMessage)
 	}
-	if err := utils.ValidatePasswordStrength(userCreationDTO.Password); err != nil {
-		utils.HandleError(w, http.StatusBadRequest, err.Error())
+
+	if !utils.ValidateSamePassword(userCreationDTO.Password, userCreationDTO.ConfirmPassword) { // check if passwords match
+		return errors.New("passwords do not match")
+	}
+
+	if err := utils.ValidatePasswordStrength(userCreationDTO.Password); err != nil { // check if password is strong
 		return err
 	}
 	return nil
