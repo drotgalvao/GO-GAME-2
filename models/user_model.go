@@ -1,10 +1,14 @@
 package models
 
+import (
+    "github.com/google/uuid"
+)
+
 type User struct {
-    ID       int    `json:"id"`
-    Name     string `json:"name"`
-    Email    string `json:"email"`
-    Password string `json:"password"`
+    ID       uuid.UUID `json:"id"`
+    Name     string    `json:"name"`
+    Email    string    `json:"email"`
+    Password string    `json:"password"`
 }
 
 type UserCreationDTO struct {
@@ -14,7 +18,7 @@ type UserCreationDTO struct {
 }
 
 type UserResponseDTO struct {
-    ID       int    `json:"id"`
-    Name     string `json:"name"`
-    Email    string `json:"email"`
+    ID       uuid.UUID `json:"id"`
+    Name     string    `json:"name"`
+    Email    string    `json:"email"`
 }

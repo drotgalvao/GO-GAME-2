@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	// "github.com/drotgalvao/GO-GAME-2/db"
 	"github.com/drotgalvao/GO-GAME-2/models"
 	"github.com/drotgalvao/GO-GAME-2/repositories"
 	"github.com/drotgalvao/GO-GAME-2/utils"

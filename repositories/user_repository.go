@@ -6,13 +6,14 @@ import (
 	"log"
 
 	"github.com/drotgalvao/GO-GAME-2/models"
+	"github.com/google/uuid"
 )
 
 func SaveUser(db *sql.DB, user models.UserCreationDTO) (*models.UserResponseDTO, error) {
 	row := db.QueryRow("INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
 		user.Name, user.Email, user.Password)
 
-	var userID int
+	var userID uuid.UUID
 	var userName, userEmail string
 	err := row.Scan(&userID, &userName, &userEmail)
 	if err!= nil {
