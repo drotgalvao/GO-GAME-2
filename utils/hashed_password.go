@@ -9,6 +9,7 @@ import (
 
 func HashPassword(password string) (string, error) {
 	saltRounds, err := strconv.Atoi(os.Getenv("PASSWORD_SALT_ROUNDS"))
+	// var saltRounds = 10
 	if err != nil {
 		return "", err
 	}

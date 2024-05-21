@@ -24,9 +24,9 @@ func SaveUser(db *sql.DB, user models.UserCreationDTO) (*models.UserResponseDTO,
 	return &models.UserResponseDTO{ID: userID, Name: userName, Email: userEmail}, nil
 }
 
-func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
-	var user models.User
-	err := db.QueryRow("SELECT id, name, email, created_at, updated_at FROM users WHERE email = $1", email).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+func GetUserByEmail(db *sql.DB, email string) (*models.UserResponseDTO, error) {
+	var user models.UserResponseDTO
+	err := db.QueryRow("SELECT id, name, email FROM users WHERE email = $1", email).Scan(&user.ID, &user.Name, &user.Email)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -34,4 +34,14 @@ func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func CheckIfUserExistsByEmail(db *sql.DB, email string) (bool, error) {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM users WHERE email = $1", email).Scan(&count)
+	if err != nil {
+		log.Printf("Error checking if user exists: %v\n", err)
+		return false, err
+	}
+	return count > 0, nil
 }

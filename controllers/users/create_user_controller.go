@@ -34,13 +34,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 
 func processUserCreation(userCreationDTO models.UserCreationDTO, w http.ResponseWriter, dbConn *sql.DB) {
 
-	existingUser, err := repositories.GetUserByEmail(dbConn, userCreationDTO.Email)
+	existingUser, err := repositories.CheckIfUserExistsByEmail(dbConn, userCreationDTO.Email)
 	if err != nil {
 		utils.HandleError(w, http.StatusInternalServerError, "error fetching the user: "+err.Error())
 		return
 	}
 
-	if existingUser != nil {
+	if existingUser {
 		utils.HandleError(w, http.StatusConflict, "email already registered.")
 		return
 	}
