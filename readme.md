@@ -29,6 +29,7 @@ Para se conectar ao banco de dados PostgreSQL, use um dos seguintes comandos:
 Conexão com o banco `go_game` usando o usuário `admin`:
 ```bash
 psql -U admin -d go_game
+select * from users;
 ```
 
 Conexão com o banco `go-game` usando o usuário `postgres`:

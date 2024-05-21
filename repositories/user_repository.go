@@ -16,7 +16,7 @@ func SaveUser(db *sql.DB, user models.UserCreationDTO) (*models.UserResponseDTO,
 	var userID uuid.UUID
 	var userName, userEmail string
 	err := row.Scan(&userID, &userName, &userEmail)
-	if err!= nil {
+	if err != nil {
 		log.Printf("Error saving user: %v\n", err)
 		return nil, err
 	}
@@ -26,11 +26,10 @@ func SaveUser(db *sql.DB, user models.UserCreationDTO) (*models.UserResponseDTO,
 
 func GetUserByEmail(db *sql.DB, email string) (*models.User, error) {
 	var user models.User
-	err := db.QueryRow("SELECT * FROM users WHERE email = $1", email).
-		Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+	err := db.QueryRow("SELECT id, name, email, created_at, updated_at FROM users WHERE email = $1", email).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
-	} else if err!= nil {
+	} else if err != nil {
 		log.Printf("Error getting user: %v\n", err)
 		return nil, err
 	}

@@ -46,6 +46,13 @@ func processUserCreation(userCreationDTO models.UserCreationDTO, w http.Response
 		return
 	}
 
+	hashedPassword, err := utils.HashPassword(userCreationDTO.Password)
+	if err != nil {
+		utils.HandleError(w, http.StatusInternalServerError, "error hashing the password: "+err.Error())
+		return
+	}
+	userCreationDTO.Password = hashedPassword
+
 	userResponseDTO, err := repositories.SaveUser(dbConn, userCreationDTO)
 	if err != nil {
 		utils.HandleError(w, http.StatusInternalServerError, "error saving the user: "+err.Error())
