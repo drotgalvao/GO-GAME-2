@@ -9,7 +9,9 @@ import (
 )
 
 
-
+// @title GO-GAME-2 API
+// @version 1.0
+// @description API para o jogo GO-GAME-2
 func main() {
 	dbConn, err := db.PoolConnection()
 	if err != nil {

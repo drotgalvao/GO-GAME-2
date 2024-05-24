@@ -10,6 +10,16 @@ import (
 	"github.com/drotgalvao/GO-GAME-2/utils"
 )
 
+//	@Summary		Create a new user
+//	@Description	creates a new user in the system
+//	@ID				createUser
+//	@Accept			json
+//	@Produce		json
+//	@Param			userCreationDTO	body		models.UserCreationDTO	true	"User Creation Data"
+//	@Success		201				{object}	models.UserResponseDTO	"Successfully created user"
+//	@Failure		400				{object}	models.ErrorDTO			"Bad Request"
+//	@Failure		500				{object}	models.ErrorDTO			"Internal Server Error"
+//	@Router			/users/create [post]
 func CreateUser(w http.ResponseWriter, r *http.Request, dbConn *sql.DB) {
 	var userCreationDTO models.UserCreationDTO
 	err := json.NewDecoder(r.Body).Decode(&userCreationDTO)
